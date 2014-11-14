@@ -36,7 +36,7 @@ static uint8_t brigspeed[] = {1, 1, 1, 1, 3, 3, 3, 3, 3, 3, 3};
 static uint8_t pwmDir[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 static uint16_t pwmCounter[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
-static int16_t pushedLevelStay[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+static uint16_t pushedLevelStay[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 static uint8_t pushedLevel[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 static uint16_t pushedLevelDuty[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 uint8_t LEDstate;     ///< current state of the LEDs
@@ -356,7 +356,11 @@ void led_check(uint8_t forward)
 void led_3lockupdate(uint8_t LEDstate)
 {
     uint8_t ledblock;
-
+       if (LEDstate & LED_NUM) { // light up caps lock
+           led_on(LED_PIN_NUMLOCK);
+       } else {
+           led_off(LED_PIN_NUMLOCK);
+       }
         if (LEDstate & LED_CAPS) { // light up caps lock
             led_on(LED_PIN_CAPSLOCK);
             for(ledblock = LED_PIN_Fx; ledblock <= LED_PIN_WASD; ledblock++)
@@ -371,6 +375,10 @@ void led_3lockupdate(uint8_t LEDstate)
                 if (ledmode[ledmodeIndex][ledblock] == LED_EFFECT_BASECAPS)
                     led_off(ledblock);
             }
+       if (LEDstate & LED_SCROLL) { // light up caps lock
+           led_on(LED_PIN_SCROLLOCK);
+       } else {
+           led_off(LED_PIN_SCROLLOCK);
         }
 }
 
@@ -464,6 +472,8 @@ void led_mode_init(void)
       pwmCounter[ledblock] = 0;
         led_mode_change(ledblock, ledmode[ledmodeIndex][ledblock]);
     }
+    
+    led_3lockupdate(LEDstate);
 }
 
 void led_mode_change (LED_BLOCK ledblock, int mode)

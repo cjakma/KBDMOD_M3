@@ -18,4 +18,4 @@
 #define KEYMAP_LAYER6         0x6600
 #define KEYMAP_LAYER7         0x6700
 #define LEDMODE_ADDRESS       0x6800      // 0x9800:0x98FF  (256Bytes)
-#define MACRO_ADDR_START      0x4400     // 0x4800 ~ 0x5FFF  (7KBytes - 256B x 28)
+#define MACRO_ADDR_START      0x4400     // 0x4400 ~ 0x5FFF  (7KBytes - 256B x 28)

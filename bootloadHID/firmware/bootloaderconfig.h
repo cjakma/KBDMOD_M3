@@ -239,7 +239,7 @@ static inline void  bootLoaderInit(void)
 {
     #ifdef KBDMOD_M3
 	// 5v -> 3.3v for USB	
-	DDRD |= (1 << PIND0);	
+	 DDRD |= (1 << PIND0);	
     PORTD |= (1 << PIND0);	
     // PS2 pullup	
     DDRD |= (1 << PIND1);	

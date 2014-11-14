@@ -226,6 +226,74 @@ void sendKey(Key keytosend)
 }
 
 
+void printModifier(uint8_t keytosend, uint8_t open)
+{
+   uint8_t keyval = 0;
+   Key prtKey;
+   
+   prtKey.mode = 0;
+   if(open)
+   {
+      prtKey.key = K_LBR;
+   }else
+   {
+      
+      prtKey.mode = MOD_SHIFT_LEFT;
+      prtKey.key = K_BKSLASH;
+   }
+   sendKey(prtKey);
+
+   wdt_reset();
+   
+   prtKey.mode = 0;
+   switch(keytosend)
+   {
+      case K_LCTRL:
+      case K_RCTRL:
+      {
+         prtKey.key = K_C;
+         break;
+      }
+      case K_LSHIFT:
+      case K_RSHIFT:
+      {
+         prtKey.key = K_S;
+         break;
+
+      }
+      case K_LALT:
+      case K_RALT:
+      {
+            
+         prtKey.key = K_A;
+         break;
+      }
+      case K_LGUI:
+      case K_RGUI:
+      {
+         prtKey.key = K_G;
+         break;
+      }
+   }
+   
+   sendKey(prtKey);
+
+   wdt_reset();
+   if(!open)
+   {
+      prtKey.key = K_RBR;
+   }else
+   {
+      
+      prtKey.mode = MOD_SHIFT_LEFT;
+      prtKey.key = K_BKSLASH;
+   }
+   sendKey(prtKey);
+   clearKey();
+
+
+}
+
 void clearKey(void)
 {
     if(usbmode)
@@ -318,7 +386,7 @@ void playMacroUSB(uint8_t macrokey)
             keyidx = pgm_read_byte_far(address++);
 #endif
         }
-        while(((keyidx < K_Modifiers) || (K_Modifiers_end < keyidx)) && keyidx != K_NONE )
+        while(((keyidx < K_Modifiers) || (K_Modifiers_end < keyidx)) && keyidx != K_NONE && keyidx < K_M01)
         {
             if(esctoggle++ == 4)
             {
@@ -339,6 +407,7 @@ void playMacroUSB(uint8_t macrokey)
             key.key = keyidx;
             sendKey(key);
             
+            wdt_reset();
 #ifdef KBDMOD_M3
             keyidx = pgm_read_byte(address++);
 #else            
@@ -616,7 +685,7 @@ void recordMacro(uint8_t macrokey)
 
             keyidx = pgm_read_byte(keymap[t_layer]+(col*MAX_ROW)+row);
 
-         if (keyidx == K_NONE)
+         if ((keyidx <= ErrorUndefined) || (K_Modifiers_end <= keyidx))
             continue;
 
          if (!prevBit && curBit)   //pushed
@@ -634,15 +703,13 @@ void recordMacro(uint8_t macrokey)
             {
                if(curBit)
                {
-                  if ((keyidx == K_FN) || (index >= 250))
+                  if ((keyidx == K_FN) || ((page == 1) && (index == 0x7F)))
                   {
                      macrobuffer[index] = K_NONE;
 
-
-                     
                      sendString(macroend);
                      wdt_reset();
-                     flash_writeinpage(macrobuffer, address+(page*256));
+                     flash_writeinpage(macrobuffer, address+(page*128));
                      wdt_reset();
                      eeprom_write_byte(EEPADDR_MACRO_SET+mIndex, 1);
                      wdt_reset();
@@ -654,17 +721,18 @@ void recordMacro(uint8_t macrokey)
                      macrobuffer[index] = keyidx;
                      if ((K_Modifiers < keyidx)  && (keyidx < K_Modifiers_end))
                      {
-                        key.key = K_SLASH;
+                        printModifier(keyidx, 1);
                      }else
                      {
                         key.key = macrobuffer[index];
+                        sendKey(key);
+                        clearKey();
                      }
-                     sendKey(key);
-                     clearKey();
 
-                     if(index == 0xFF)
+
+                     if(index == 0x7F)
                      {
-                         flash_writeinpage(macrobuffer, address+(page*256));
+                         flash_writeinpage(macrobuffer, address+(page*128));
                          page++;
                          index = 0;
                      }else
@@ -677,9 +745,8 @@ void recordMacro(uint8_t macrokey)
                   if ((K_Modifiers < keyidx)  && (keyidx < K_Modifiers_end))
                   {
                      macrobuffer[index++] = keyidx;
-                     key.key = K_SLASH;
-                     sendKey(key);
-                    clearKey();
+                     printModifier(keyidx, 0);
+                     
 
 
                   }

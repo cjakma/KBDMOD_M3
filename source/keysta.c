@@ -123,7 +123,7 @@ kbd_get_rx_char(void)
 static void timerAction(void)
 {
 	/* restart timer */
-	outp(COUNT_UP, TCNT2);	/* value counts up from this to zero */
+	outp(COUNT_UP, TCNT0);	/* value counts up from this to zero */
 
 	if (kbd_state < IDLE_END) { // start, wait_rel or ready to tx
 		dataHigh();
