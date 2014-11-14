@@ -120,12 +120,14 @@ usbdrv/oddebug.o :	usbdrv/oddebug.c 	usbdrv/oddebug.h
 usbdrv/usbdrvasm.o : usbdrv/usbdrvasm.asm usbdrv/usbdrvasm.S usbdrv/usbportability.h	usbdrv/usbdrv.h  usbconfig.h
 
 all:
-#	rm -rf $(TRG)
-#	mkdir $(TRG)
-#	mv *.lst $(TRG)
-#	mv *.bin $(TRG)
-#	mv *.cof $(TRG)
-#	mv *.eep $(TRG)
-#	mv *.elf $(TRG)
-#	mv *.hex $(TRG)
-#	mv *.map $(TRG)
+	rm -rf $(TRG)
+	mkdir $(TRG)
+	mv *.lst $(TRG)
+	mv *.bin $(TRG)
+	mv *.cof $(TRG)
+	mv *.eep $(TRG)
+	mv *.elf $(TRG)
+	mv *.hex $(TRG)
+	mv *.map $(TRG)
+	cp *.bat $(TRG)
+	cp bootloadHID_M3.exe $(TRG)
