@@ -380,6 +380,7 @@ void led_3lockupdate(uint8_t LEDstate)
        } else {
            led_off(LED_PIN_SCROLLOCK);
         }
+   }
 }
 
 #define LED_INDICATOR_MAXTIME 90
